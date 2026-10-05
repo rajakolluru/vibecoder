@@ -1,0 +1,15 @@
+{
+  "title": "You Might Be a Vibe Coder",
+  "tagline": "AI gotchas for programmers, designers and the people who sign off on them.",
+  "base_url": "https://vibecoder.itmusings.com",
+  "cname": "vibecoder.itmusings.com",
+  "timezone": "Asia/Kolkata",
+  "cadence": "every Monday, Wednesday and Friday",
+  "author": "Raja Shankar Kolluru",
+  "home_site": "https://itmusings.com",
+  "audiences": {
+    "programmers": "Programmers",
+    "designers": "Designers",
+    "leaders": "Industry experts"
+  }
+}

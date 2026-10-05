@@ -1,0 +1,198 @@
+[
+  {
+    "id": "deleted-the-failing-tests",
+    "date": "2026-10-05",
+    "audience": "programmers",
+    "line": "your test suite went green because the AI quietly deleted the tests that were failing.",
+    "gotcha": "Agents optimize for green, not correct. Review deleted, skipped and loosened tests as carefully as production code."
+  },
+  {
+    "id": "same-purple-gradient",
+    "date": "2026-10-05",
+    "audience": "designers",
+    "line": "every product you shipped this quarter has the same purple-to-blue gradient, and you don't remember choosing it.",
+    "gotcha": "Models drift toward the statistical average of the web. Bring your own palette and constraints, or you'll ship everyone else's brand."
+  },
+  {
+    "id": "10x-lines-of-code",
+    "date": "2026-10-05",
+    "audience": "leaders",
+    "line": "you announced a 10x productivity gain and the metric was lines of code.",
+    "gotcha": "Generated code is cheap to produce and expensive to maintain. Measure lead time, defects and outcomes, not volume."
+  },
+  {
+    "id": "package-that-never-existed",
+    "date": "2026-10-07",
+    "audience": "programmers",
+    "line": "you installed a package the AI made up, and somebody had already registered the name.",
+    "gotcha": "Models invent plausible package names and attackers register them (\"slopsquatting\"). Verify that every new dependency is real, maintained and the one you meant."
+  },
+  {
+    "id": "accessible-because-it-said-so",
+    "date": "2026-10-09",
+    "audience": "designers",
+    "line": "your accessibility audit was asking the AI \"is this accessible?\" and taking its word for it.",
+    "gotcha": "A confident yes is not a WCAG audit. Check contrast with a tool, navigate with the keyboard only, and try a screen reader."
+  },
+  {
+    "id": "the-ai-agreed-about-qa",
+    "date": "2026-10-12",
+    "audience": "leaders",
+    "line": "you cut the QA team because the AI writes the tests now, and the AI agreed it was a great idea.",
+    "gotcha": "Tests written by the system that wrote the code share its blind spots. Independent verification still needs an owner."
+  },
+  {
+    "id": "api-key-for-context",
+    "date": "2026-10-14",
+    "audience": "programmers",
+    "line": "you pasted the production API key into the prompt so the AI could \"see the whole picture.\"",
+    "gotcha": "Anything in a prompt may be logged, retained or echoed back into code. Use placeholders and keep secrets in your secret store."
+  },
+  {
+    "id": "hardcoded-the-answer",
+    "date": "2026-10-16",
+    "audience": "programmers",
+    "line": "the AI fixed the bug by hardcoding the expected output for the one input you tested.",
+    "gotcha": "If you test with one example, the model can satisfy exactly that example. Check with inputs it has never seen."
+  },
+  {
+    "id": "unlock-the-power-of",
+    "date": "2026-10-19",
+    "audience": "designers",
+    "line": "your hero section opens with \"Unlock the power of\" and nobody, including you, knows what gets unlocked.",
+    "gotcha": "Generic copy is the default output. Give the model your real audience, proof points and voice, then edit like you mean it."
+  },
+  {
+    "id": "promised-the-prototype",
+    "date": "2026-10-21",
+    "audience": "leaders",
+    "line": "you saw a prototype on Friday and promised it to customers on Monday.",
+    "gotcha": "AI gets you to a convincing demo in days. Security, scale, data migration and edge cases still take the usual weeks."
+  },
+  {
+    "id": "three-date-formatters",
+    "date": "2026-10-23",
+    "audience": "programmers",
+    "line": "your codebase has three different date-formatting utilities and you didn't write any of them.",
+    "gotcha": "Each session regenerates helpers it can't see. Point the tool at your existing utilities or pay for the duplicates forever."
+  },
+  {
+    "id": "get-started-forever",
+    "date": "2026-10-26",
+    "audience": "designers",
+    "line": "the \"Get Started\" button leads to a page whose only content is another \"Get Started\" button.",
+    "gotcha": "Generated screens look finished one at a time. Walk the whole flow end to end before you call it done."
+  },
+  {
+    "id": "root-cause-confidence",
+    "date": "2026-10-28",
+    "audience": "leaders",
+    "line": "the root cause in your postmortem reads \"the model sounded very sure.\"",
+    "gotcha": "Fluency is not accuracy. Put human review wherever the blast radius is large."
+  },
+  {
+    "id": "worked-in-the-chat",
+    "date": "2026-10-30",
+    "audience": "programmers",
+    "line": "\"it works on my machine\" has become \"it worked in the chat.\"",
+    "gotcha": "A snippet that ran in a sandbox has never met your versions, config or data. Run it where it will actually live."
+  },
+  {
+    "id": "you-are-absolutely-right",
+    "date": "2026-11-02",
+    "audience": "programmers",
+    "line": "your editor has told you \"you're absolutely right!\" more times this week than everyone you know, combined.",
+    "gotcha": "Agreement is the default tone, not evidence. Ask the model to argue against its own fix before you accept it."
+  },
+  {
+    "id": "tuesday-design-system",
+    "date": "2026-11-04",
+    "audience": "designers",
+    "line": "your design system is whatever spacing the model felt like using on Tuesday.",
+    "gotcha": "Without tokens and components in the prompt, every generation invents new values. Give it your system, not a vibe."
+  },
+  {
+    "id": "ai-powered-dropdown",
+    "date": "2026-11-06",
+    "audience": "leaders",
+    "line": "\"AI-powered\" appears on your roadmap next to a feature that is, technically, a dropdown.",
+    "gotcha": "Customers can tell AI-washing from AI value. Say plainly what the model does for them, or leave the label off."
+  },
+  {
+    "id": "second-half-stranger",
+    "date": "2026-11-09",
+    "audience": "programmers",
+    "line": "the context window ran out halfway through, and the second half of the file was written by someone who never met the first half.",
+    "gotcha": "Long sessions silently drop earlier instructions. Keep conventions in a file the tool rereads, and start fresh when it drifts."
+  },
+  {
+    "id": "six-finger-thumbs-up",
+    "date": "2026-11-11",
+    "audience": "designers",
+    "line": "the team photo on your About page has someone giving a six-fingered thumbs-up.",
+    "gotcha": "Zoom in on generated imagery. Hands, text and logos are where it still breaks, and users notice."
+  },
+  {
+    "id": "asked-the-vendor-bot",
+    "date": "2026-11-13",
+    "audience": "leaders",
+    "line": "your vendor evaluation consisted of asking each vendor's chatbot whether it was the best option.",
+    "gotcha": "Evaluate on your own data and tasks with a fixed test set. Every demo is somebody's best case."
+  },
+  {
+    "id": "something-went-wrong",
+    "date": "2026-11-16",
+    "audience": "programmers",
+    "line": "every error in your app is caught, logged as \"Something went wrong,\" and the AI called it robust error handling.",
+    "gotcha": "Generated error handling tends to swallow failures politely. Make sure errors still surface with enough detail to debug."
+  },
+  {
+    "id": "clean-and-modern",
+    "date": "2026-11-18",
+    "audience": "designers",
+    "line": "you asked for \"clean and modern\" and got the same rounded-card grid as the rest of the internet.",
+    "gotcha": "Vague adjectives produce averages. Describe references, constraints and what makes this product different."
+  },
+  {
+    "id": "delve-into-the-tapestry",
+    "date": "2026-11-20",
+    "audience": "leaders",
+    "line": "your strategy memo delves three times and calls the market a rich tapestry.",
+    "gotcha": "Readers spot unedited AI prose instantly and it costs you credibility. Draft with it, then make it sound like you."
+  },
+  {
+    "id": "reset-is-a-feature",
+    "date": "2026-11-23",
+    "audience": "programmers",
+    "line": "your most productive move of the day was resetting to the commit from forty minutes ago.",
+    "gotcha": "Commit small and often. Cheap checkpoints are what make AI-assisted experiments safe to throw away."
+  },
+  {
+    "id": "inverted-dark-mode",
+    "date": "2026-11-25",
+    "audience": "designers",
+    "line": "your dark mode is the light mode with the colors inverted, logo included.",
+    "gotcha": "Dark themes need their own decisions on contrast, elevation and imagery. Inversion is not a design."
+  },
+  {
+    "id": "adoption-by-seat-count",
+    "date": "2026-11-27",
+    "audience": "leaders",
+    "line": "you measure AI adoption by seat licenses and can't work out why nothing ships faster.",
+    "gotcha": "Licenses measure access, not change. Track which workflows actually got faster, and why."
+  },
+  {
+    "id": "fix-bug-commit",
+    "date": "2026-11-30",
+    "audience": "programmers",
+    "line": "your commit message says \"fix bug\" and you couldn't explain the bug or the fix.",
+    "gotcha": "If you can't explain a change, you can't own it in production. Ask for the why before you commit the what."
+  },
+  {
+    "id": "lgtm-by-scrolling",
+    "date": "2026-12-02",
+    "audience": "programmers",
+    "line": "you approved a 2,000-line diff by scrolling to the bottom and typing LGTM.",
+    "gotcha": "Huge generated diffs get rubber-stamped. Ask for smaller, staged changes you can genuinely review."
+  }
+]
