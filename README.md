@@ -56,6 +56,18 @@ Paragraphs separated by blank lines. **Bold**, *italic*, `code` and [links](http
 
 Posts are released on their `date` just like gotchas, appear at `/blog/<slug>/`, and the newest one is featured on the home page.
 
+## Turn on comments (one-time, about 5 minutes)
+
+Every one-liner and blog post gets a **Comment** button and a comment thread, powered by [giscus](https://giscus.app). Comments are stored as GitHub Discussions in this repo: free, no ads, no server. Readers sign in with GitHub to comment.
+
+1. The repo must be **public**. In repo **Settings → General → Features**, tick **Discussions**.
+2. In the **Discussions** tab, create a category called `Comments` with the **Announcement** format, so only giscus (not random visitors) can open new threads.
+3. Install the giscus app on this repo: <https://github.com/apps/giscus>.
+4. Go to <https://giscus.app>, enter `rajakolluru/vibecoder`, choose mapping **pathname** and category **Comments**. The generated snippet shows `data-repo-id` and `data-category-id`.
+5. Paste those two values into `site.json` under `comments` (`repo_id`, `category_id`), then rebuild and push.
+
+Until both IDs are set, the build prints a note and leaves the comment buttons out, so nothing broken ever shows. You can moderate, edit or delete comments from the repo's Discussions tab.
+
 ## Preview locally
 
 ```bash

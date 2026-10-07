@@ -71,9 +71,35 @@ def share_links(g, url):
     )
 
 
+def comments_on(site):
+    c = site.get("comments") or {}
+    return all(c.get(k) for k in ("repo", "repo_id", "category", "category_id"))
+
+
+def comment_link(href):
+    return f'<a class="btn btn-comment" href="{href}">&#128172; Comment</a>'
+
+
+def comments_section(site):
+    if not comments_on(site):
+        return ""
+    c = site["comments"]
+    return f"""<section id="comments" class="comments">
+  <h2>Comments</h2>
+  <p class="muted comments-note">Comments live in GitHub Discussions. Sign in with GitHub to join in.</p>
+  <script src="https://giscus.app/client.js"
+    data-repo="{esc(c['repo'])}" data-repo-id="{esc(c['repo_id'])}"
+    data-category="{esc(c['category'])}" data-category-id="{esc(c['category_id'])}"
+    data-mapping="pathname" data-strict="1" data-reactions-enabled="1" data-emit-metadata="0"
+    data-input-position="top" data-theme="preferred_color_scheme" data-lang="en" data-loading="lazy"
+    crossorigin="anonymous" async></script>
+</section>"""
+
+
 def card(g, site, root, *, size="small", heading="h2", link=True):
     url = f"{site['base_url']}/g/{g['id']}/"
     aud = g["audience"]
+    comment = comment_link("#comments" if not link else f"{root}g/{g['id']}/#comments") if comments_on(site) else ""
     line = esc(g["line"])
     if link:
         line = f'<a href="{root}g/{g["id"]}/">{line}</a>'
@@ -82,7 +108,7 @@ def card(g, site, root, *, size="small", heading="h2", link=True):
   <p class="lead">You might be a vibe coder <span class="kw">if</span>&hellip;</p>
   <{heading} class="line">&hellip;{line}</{heading}>
   <p class="takeaway"><span class="label">The gotcha</span>{esc(g['gotcha'])}</p>
-  <div class="actions"><button class="btn copy" type="button" data-url="{esc(url)}">Copy link</button>{share_links(g, url)}</div>
+  <div class="actions"><button class="btn copy" type="button" data-url="{esc(url)}">Copy link</button>{share_links(g, url)}{comment}</div>
 </article>"""
 
 
@@ -225,8 +251,9 @@ def build_post(site, p, newer, older, year):
   <div class="post-body">
 {markdown(p['_body'])}
   </div>
-  <div class="actions post-actions"><button class="btn copy" type="button" data-url="{esc(url)}">Copy link</button><a class="btn" href="https://www.linkedin.com/sharing/share-offsite/?url={u}" target="_blank" rel="noopener">LinkedIn</a><a class="btn" href="https://x.com/intent/post?text={quote(p['title'])}&amp;url={u}" target="_blank" rel="noopener">X</a></div>
+  <div class="actions post-actions"><button class="btn copy" type="button" data-url="{esc(url)}">Copy link</button><a class="btn" href="https://www.linkedin.com/sharing/share-offsite/?url={u}" target="_blank" rel="noopener">LinkedIn</a><a class="btn" href="https://x.com/intent/post?text={quote(p['title'])}&amp;url={u}" target="_blank" rel="noopener">X</a>{comment_link("#comments") if comments_on(site) else ""}</div>
 </article>
+{comments_section(site)}
 {nav}"""
     return page(site, title=f"{p['title']} | {site['title']}", description=p.get("summary") or p["title"],
                 path=f"blog/{p['slug']}/", root=root, body=body, year=year, og_type="article")
@@ -326,6 +353,7 @@ def build_gotcha(site, g, newer, older, year):
     body = f"""<section class="today">
 {card(g, site, root, size="hero", heading="h1", link=False)}
 </section>
+{comments_section(site)}
 {nav}"""
     return page(
         site,
@@ -437,6 +465,8 @@ def main():
     if site.get("cname"):
         write(DIST / "CNAME", site["cname"] + "\n")
 
+    if not comments_on(site):
+        print("Note: comments are off until comments.repo_id and comments.category_id are set in site.json (see README).")
     print(f"Built {len(published)} published gotchas and {len(posts)} blog post(s) as of {today}; {len(upcoming)} gotchas queued"
           + (f", next on {upcoming[0]['date']}." if upcoming else "."))
 
