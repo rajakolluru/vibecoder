@@ -12,6 +12,7 @@ import argparse
 import datetime as dt
 import html
 import json
+import re
 import shutil
 from email.utils import format_datetime
 from pathlib import Path
@@ -113,7 +114,7 @@ def page(site, *, title, description, path, root, body, year, og_type="website")
 <body>
 <header class="masthead"><div class="wrap">
   <a class="brand" href="{root}"><span class="brand-mark">if</span><span>{esc(site['title'])}</span></a>
-  <nav><a href="{root}#archive">Archive</a><a href="{root}#about">About</a><a href="{root}feed.xml">RSS</a></nav>
+  <nav><a href="{root}#archive">Archive</a><a href="{root}blog/">Blog</a><a href="{root}#about">About</a><a href="{root}#me">About me</a><a href="{root}feed.xml">RSS</a></nav>
 </div></header>
 <main class="wrap">
 {body}
@@ -128,7 +129,110 @@ def page(site, *, title, description, path, root, body, year, og_type="website")
 """
 
 
-def build_home(site, published, upcoming, year):
+def load_posts(site):
+    """Posts are content/posts/*.md with a small front-matter block."""
+    posts = []
+    folder = ROOT / "content" / "posts"
+    for f in sorted(folder.glob("*.md")) if folder.exists() else []:
+        text = f.read_text(encoding="utf-8")
+        m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
+        if not m:
+            raise SystemExit(f"{f.name}: missing front matter")
+        meta = {}
+        for line in m.group(1).splitlines():
+            if ":" in line:
+                k, v = line.split(":", 1)
+                meta[k.strip()] = v.strip()
+        for k in ("title", "date"):
+            if not meta.get(k):
+                raise SystemExit(f"{f.name}: missing {k}")
+        meta["slug"] = meta.get("slug") or f.stem
+        meta["_date"] = dt.date.fromisoformat(meta["date"])
+        meta["_body"] = m.group(2).strip()
+        posts.append(meta)
+    slugs = [p["slug"] for p in posts]
+    if len(slugs) != len(set(slugs)):
+        raise SystemExit("duplicate post slug")
+    return posts
+
+
+def md_inline(t):
+    t = esc(t)
+    t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"(?<![\w*])\*(?!\s)(.+?)(?<!\s)\*(?![\w*])", r"<em>\1</em>", t)
+    t = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", r'<a href="\2">\1</a>', t)
+    return t
+
+
+def markdown(src):
+    """Just enough Markdown for blog posts: paragraphs, ## headings, > quotes, - lists, inline marks."""
+    out = []
+    for block in re.split(r"\n\s*\n", src.strip()):
+        lines = block.strip().splitlines()
+        first = lines[0]
+        if first.startswith("#"):
+            level = min(len(first) - len(first.lstrip("#")), 4)
+            out.append(f"<h{level}>{md_inline(first.lstrip('#').strip())}</h{level}>")
+        elif all(l.startswith(">") for l in lines):
+            inner = " ".join(l[1:].strip() for l in lines)
+            out.append(f"<blockquote><p>{md_inline(inner)}</p></blockquote>")
+        elif all(re.match(r"[-*] ", l) for l in lines):
+            out.append("<ul>" + "".join(f"<li>{md_inline(l[2:])}</li>" for l in lines) + "</ul>")
+        else:
+            out.append(f"<p>{md_inline(' '.join(l.strip() for l in lines))}</p>")
+    return "\n".join(out)
+
+
+def post_teaser(p, root):
+    summary = f'<p class="post-summary">{md_inline(p["summary"])}</p>' if p.get("summary") else ""
+    return f"""<article class="post-teaser">
+  <time datetime="{p['date']}">{nice_date(p['_date'])}</time>
+  <h3><a href="{root}blog/{p['slug']}/">{esc(p['title'])}</a></h3>
+  {summary}
+</article>"""
+
+
+def build_blog_index(site, posts, year):
+    root = "../"
+    items = "\n".join(post_teaser(p, root) for p in posts) or '<p class="muted">The first post is on its way.</p>'
+    body = f"""<section class="blog-head">
+  <p class="eyebrow">// Longer thoughts on building software with AI</p>
+  <h1>The Blog</h1>
+</section>
+<section class="post-list">
+{items}
+</section>"""
+    return page(site, title=f"Blog | {site['title']}", description="Experiences with vibe coding: the good code, the gotchas and the lessons.",
+                path="blog/", root=root, body=body, year=year)
+
+
+def build_post(site, p, newer, older, year):
+    root = "../../"
+    url = f"{site['base_url']}/blog/{p['slug']}/"
+    u = quote(url, safe="")
+    nav = '<nav class="pager">'
+    nav += f'<a href="{root}blog/{older["slug"]}/">&larr; Older</a>' if older else "<span></span>"
+    nav += f'<a href="{root}blog/">All posts</a>'
+    nav += f'<a href="{root}blog/{newer["slug"]}/">Newer &rarr;</a>' if newer else "<span></span>"
+    nav += "</nav>"
+    body = f"""<article class="post">
+  <header class="post-header">
+    <p class="eyebrow"><a href="{root}blog/">// Blog</a></p>
+    <h1>{esc(p['title'])}</h1>
+    <p class="post-meta">{esc(site['author'])} &middot; <time datetime="{p['date']}">{nice_date(p['_date'])}</time></p>
+  </header>
+  <div class="post-body">
+{markdown(p['_body'])}
+  </div>
+  <div class="actions post-actions"><button class="btn copy" type="button" data-url="{esc(url)}">Copy link</button><a class="btn" href="https://www.linkedin.com/sharing/share-offsite/?url={u}" target="_blank" rel="noopener">LinkedIn</a><a class="btn" href="https://x.com/intent/post?text={quote(p['title'])}&amp;url={u}" target="_blank" rel="noopener">X</a></div>
+</article>
+{nav}"""
+    return page(site, title=f"{p['title']} | {site['title']}", description=p.get("summary") or p["title"],
+                path=f"blog/{p['slug']}/", root=root, body=body, year=year, og_type="article")
+
+
+def build_home(site, published, upcoming, year, posts=()):
     root = ""
     latest, rest = published[0], published[1:]
     nxt = ""
@@ -147,6 +251,7 @@ def build_home(site, published, upcoming, year):
 {card(latest, site, root, size="hero")}
 {nxt}
 </section>
+{build_home_blog(posts)}
 <section id="archive" class="archive">
   <div class="archive-head"><h2>Previously</h2><div class="filters" role="group" aria-label="Filter by audience">{chips}</div></div>
   <div class="archive-list">
@@ -158,8 +263,57 @@ def build_home(site, published, upcoming, year):
   <h2>What is this?</h2>
   <p>Vibe coding is building software by describing what you want and accepting what the AI hands back. It is fast, fun and occasionally ruinous. Each entry here is a one-liner you might recognize, followed by the real gotcha behind the laugh.</p>
   <p>It is written for programmers, designers and the industry experts who approve the budgets. New entries arrive {esc(site['cadence'])}. Follow along by <a href="feed.xml">RSS</a>.</p>
-</section>"""
+{build_epigraph(site)}
+</section>
+{build_about_me(site, year)}"""
     return page(site, title=site["title"], description=site["tagline"], path="", root=root, body=body, year=year)
+
+
+def build_home_blog(posts):
+    if not posts:
+        return ""
+    p = posts[0]
+    more = '<a class="more" href="blog/">All posts &rarr;</a>' if len(posts) > 1 else ""
+    return f"""<section class="home-blog" aria-label="From the blog">
+  <div class="home-blog-head"><span class="label">From the blog</span>{more}</div>
+{post_teaser(p, "")}
+</section>"""
+
+
+def build_epigraph(site):
+    ep = site.get("epigraph")
+    if not ep:
+        return ""
+    lines = "<br>\n    ".join(esc(l) for l in ep["lines"])
+    intro = f'<p class="epigraph-intro">{esc(ep["intro"])}</p>' if ep.get("intro") else ""
+    return f"""  <figure class="epigraph">
+    {intro}
+    <blockquote><p>{lines}</p></blockquote>
+    <figcaption>&mdash; {ep['source']}</figcaption>
+  </figure>"""
+
+
+def build_about_me(site, year):
+    me = site.get("about_me")
+    if not me:
+        return ""
+    home = site["home_site"]
+    home_link = f'<a href="{esc(home)}">{esc(home.split("//")[-1])}</a>'
+    paras = "\n".join(f"  <p>{p.replace('{home_link}', home_link)}</p>" for p in me["paragraphs"])
+    stats = [
+        (str(me["in_industry_since"]), "in the industry since"),
+        (f"{year - me['in_industry_since']}+", "years writing software"),
+        (str(me["blogging_since"]), "blogging since"),
+    ]
+    stat_html = "".join(f'<div class="stat"><span class="stat-num">{esc(n)}</span><span class="stat-label">{esc(l)}</span></div>' for n, l in stats)
+    links = " &middot; ".join(f'<a href="{esc(l["url"])}">{esc(l["label"])}</a>' for l in me.get("links", []))
+    return f"""<section id="me" class="me">
+  <h2>About me</h2>
+  <p class="me-name">{esc(me['name'])}</p>
+  <div class="stats">{stat_html}</div>
+{paras}
+  <p class="me-links">{links}</p>
+</section>"""
 
 
 def build_gotcha(site, g, newer, older, year):
@@ -185,8 +339,19 @@ def build_gotcha(site, g, newer, older, year):
     )
 
 
-def build_feed(site, published, tz):
+def build_feed(site, published, tz, posts=()):
     items = []
+    for p in posts[:20]:
+        url = f"{site['base_url']}/blog/{p['slug']}/"
+        when = dt.datetime.combine(p["_date"], dt.time(0, 5), tzinfo=tz)
+        items.append(f"""  <item>
+    <title>{esc(p['title'])}</title>
+    <link>{url}</link>
+    <guid isPermaLink="true">{url}</guid>
+    <pubDate>{format_datetime(when)}</pubDate>
+    <category>Blog</category>
+    <description>{esc(p.get('summary') or p['title'])}</description>
+  </item>""")
     for g in published[:40]:
         url = f"{site['base_url']}/g/{g['id']}/"
         when = dt.datetime.combine(g["_date"], dt.time(0, 5), tzinfo=tz)
@@ -230,7 +395,11 @@ def write(path, text):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--today", help="build as if today were YYYY-MM-DD (for previews)")
+    ap.add_argument("--out", help="output directory (default: dist/)")
     args = ap.parse_args()
+    global DIST
+    if args.out:
+        DIST = Path(args.out).resolve()
 
     site, items = load()
     tz = ZoneInfo(site["timezone"])
@@ -246,22 +415,29 @@ def main():
     shutil.copytree(ROOT / "assets", DIST / "assets")
     year = today.year
 
-    write(DIST / "index.html", build_home(site, published, upcoming, year))
+    posts = sorted((p for p in load_posts(site) if p["_date"] <= today), key=lambda p: p["_date"], reverse=True)
+    write(DIST / "index.html", build_home(site, published, upcoming, year, posts))
+    write(DIST / "blog" / "index.html", build_blog_index(site, posts, year))
+    for i, p in enumerate(posts):
+        newer = posts[i - 1] if i > 0 else None
+        older = posts[i + 1] if i + 1 < len(posts) else None
+        write(DIST / "blog" / p["slug"] / "index.html", build_post(site, p, newer, older, year))
     for i, g in enumerate(published):
         newer = published[i - 1] if i > 0 else None
         older = published[i + 1] if i + 1 < len(published) else None
         write(DIST / "g" / g["id"] / "index.html", build_gotcha(site, g, newer, older, year))
-    write(DIST / "feed.xml", build_feed(site, published, tz))
+    write(DIST / "feed.xml", build_feed(site, published, tz, posts))
     write(DIST / "404.html", build_404(site, year))
 
-    urls = [f"{site['base_url']}/"] + [f"{site['base_url']}/g/{g['id']}/" for g in published]
+    urls = [f"{site['base_url']}/", f"{site['base_url']}/blog/"] + [f"{site['base_url']}/blog/{p['slug']}/" for p in posts] \
+        + [f"{site['base_url']}/g/{g['id']}/" for g in published]
     write(DIST / "sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
           + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls) + "</urlset>\n")
     write(DIST / "robots.txt", f"User-agent: *\nAllow: /\nSitemap: {site['base_url']}/sitemap.xml\n")
     if site.get("cname"):
         write(DIST / "CNAME", site["cname"] + "\n")
 
-    print(f"Built {len(published)} published gotchas as of {today}; {len(upcoming)} queued"
+    print(f"Built {len(published)} published gotchas and {len(posts)} blog post(s) as of {today}; {len(upcoming)} gotchas queued"
           + (f", next on {upcoming[0]['date']}." if upcoming else "."))
 
 

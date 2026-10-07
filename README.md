@@ -8,6 +8,7 @@ A static site with no dependencies beyond Python 3.9+. Gotchas are queued with f
 
 ```
 content/gotchas.json   all gotchas, past and future
+content/posts/         blog posts in Markdown
 site.json              title, domain, timezone, cadence, audiences
 build.py               generates dist/ (only gotchas dated today or earlier)
 assets/                style.css, app.js, favicon.svg
@@ -31,6 +32,29 @@ Append an entry to `content/gotchas.json`:
 - `audience` is `programmers`, `designers` or `leaders` (shown as "Industry experts").
 - `id` becomes the permalink: `/g/short-url-slug/`. Don't change it once published.
 - Entries are numbered in date order, so keep new dates after the last published one.
+
+## Write a blog post
+
+Add a Markdown file to `content/posts/`, e.g. `content/posts/2026-10-14-my-post.md`:
+
+```markdown
+---
+title: The post title
+slug: my-post
+date: 2026-10-14
+summary: One or two sentences shown on the home page and blog index.
+---
+
+Paragraphs separated by blank lines. **Bold**, *italic*, `code` and [links](https://example.com) work.
+
+## A subheading
+
+> A quote
+
+- A list item
+```
+
+Posts are released on their `date` just like gotchas, appear at `/blog/<slug>/`, and the newest one is featured on the home page.
 
 ## Preview locally
 

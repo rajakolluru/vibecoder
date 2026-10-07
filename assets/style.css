@@ -118,3 +118,58 @@ h2 { font-size: 1.6rem; letter-spacing: -0.02em; margin: 0; }
   .gotcha--hero { padding: 22px 20px 20px; }
   .masthead nav { gap: 14px; }
 }
+
+/* About me */
+.me { margin-top: 72px; }
+.me h2 { margin-bottom: 4px; }
+.me p { max-width: 62ch; }
+.me-name { font-family: var(--mono); font-size: 0.9rem; color: var(--muted); margin: 0 0 18px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 22px; }
+.stat { background: var(--card); border: 2px solid var(--ink); border-radius: 4px; box-shadow: 4px 4px 0 var(--ink); padding: 12px 14px; }
+.stat-num { display: block; font-weight: 800; font-size: 1.8rem; letter-spacing: -0.02em; line-height: 1.1; color: var(--accent); }
+.stat-label { display: block; font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-top: 4px; }
+.me-links { font-family: var(--mono); font-size: 0.85rem; }
+@media (max-width: 560px) {
+  .stats { gap: 8px; }
+  .stat { padding: 10px; box-shadow: 3px 3px 0 var(--ink); }
+  .stat-num { font-size: 1.35rem; }
+  .stat-label { font-size: 0.62rem; }
+}
+
+/* Epigraph */
+.epigraph { margin: 34px 0 0; padding: 22px 26px; background: var(--card); border: 2px solid var(--ink); border-left: 8px solid var(--accent); border-radius: 4px; box-shadow: 4px 4px 0 var(--ink); max-width: 62ch; }
+.epigraph-intro { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin: 0 0 12px; }
+.epigraph blockquote { margin: 0; }
+.epigraph blockquote p { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.2rem; line-height: 1.6; margin: 0; }
+.epigraph figcaption { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-top: 12px; }
+@media (max-width: 560px) {
+  .epigraph { padding: 16px 16px; }
+  .epigraph blockquote p { font-size: 1.05rem; }
+}
+
+/* Blog */
+.home-blog { margin-top: 44px; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); padding: 16px 0 6px; }
+.home-blog-head { display: flex; justify-content: space-between; align-items: baseline; }
+.home-blog .more { font-family: var(--mono); font-size: 0.8rem; }
+.post-teaser { padding: 10px 0 14px; }
+.post-teaser time { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+.post-teaser h3 { font-size: 1.4rem; letter-spacing: -0.02em; line-height: 1.2; margin: 4px 0 6px; text-wrap: balance; }
+.post-teaser h3 a { text-decoration: none; }
+.post-teaser h3 a:hover { text-decoration: underline; text-decoration-color: var(--accent); color: inherit; }
+.post-summary { margin: 0; color: var(--muted); font-size: 1rem; max-width: 62ch; }
+.blog-head { padding-top: 36px; }
+.blog-head h1, .post-header h1 { font-size: clamp(2rem, 6vw, 3rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; margin: 0 0 8px; text-wrap: balance; }
+.post-list { margin-top: 18px; display: grid; gap: 8px; }
+.post-list .post-teaser { border-bottom: 1px solid var(--rule); padding-bottom: 22px; }
+.post { padding-top: 36px; }
+.post-header .eyebrow a { text-decoration: none; }
+.post-meta { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin: 0 0 30px; }
+.post-body { max-width: 66ch; font-size: 1.08rem; line-height: 1.7; }
+.post-body p { margin: 0 0 1.15em; }
+.post-body h2 { font-size: 1.5rem; margin: 1.8em 0 0.6em; }
+.post-body h3 { font-size: 1.2rem; margin: 1.6em 0 0.5em; }
+.post-body blockquote { margin: 1.4em 0; padding: 14px 20px; background: var(--card); border: 2px solid var(--ink); border-left: 8px solid var(--accent); border-radius: 4px; }
+.post-body blockquote p { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 1.12rem; }
+.post-body code { font-family: var(--mono); font-size: 0.9em; background: var(--card); border: 1px solid var(--rule); padding: 1px 5px; border-radius: 3px; }
+.post-body ul { padding-left: 1.2em; margin: 0 0 1.15em; }
+.post-actions { margin-top: 28px; padding-top: 18px; border-top: 2px solid var(--ink); }

@@ -11,5 +11,35 @@
     "programmers": "Programmers",
     "designers": "Designers",
     "leaders": "Industry experts"
+  },
+  "about_me": {
+    "name": "Raja Shankar Kolluru",
+    "in_industry_since": 1991,
+    "blogging_since": 2007,
+    "paragraphs": [
+      "I have been writing software since 1991. That covers the client-server years, the dot-com boom, J2EE, SOA, cloud and now AI, and I have watched each one arrive as the thing that would change everything.",
+      "Most of that time was spent in financial services, at firms such as Merrill Lynch, JP Morgan, Bank One and Citigroup, and later as an enterprise architect at Fortune 100 companies, including Walmart. Today I run Ajapro Software. Through all of it I have stayed a hands-on programmer, because nothing beats writing the code yourself.",
+      "I have been blogging at {home_link} since 2007. My <a href=\"https://itmusings.com/hello-world/\">first post</a> explained why: too many good lessons were dying inside corporate wikis. This site is the same idea in smaller pieces. AI coding tools are the most useful thing to happen to programming in my career, and the gotchas are real. Here they are, one laugh at a time."
+    ],
+    "links": [
+      {
+        "label": "IT Musings blog",
+        "url": "https://itmusings.com"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/rajakolluru"
+      }
+    ]
+  },
+  "epigraph": {
+    "intro": "Alexander Pope, on how vibe coding won the industry over, and how we hope this site wins you over too:",
+    "lines": [
+      "Vice is a monster of so frightful mien,",
+      "As to be hated needs but to be seen;",
+      "Yet seen too oft, familiar with her face,",
+      "We first endure, then pity, then embrace."
+    ],
+    "source": "Alexander Pope, <cite>An Essay on Man</cite>, Epistle II (1734)"
   }
 }
