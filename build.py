@@ -127,7 +127,11 @@ def page(site, *, title, description, path, root, body, year, og_type="website")
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(description)}">
 <meta property="og:url" content="{esc(canonical)}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="{esc(site['base_url'])}/assets/og.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1260">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{esc(site['base_url'])}/assets/og.png">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(description)}">
 <link rel="alternate" type="application/rss+xml" title="{esc(site['title'])}" href="{root}feed.xml">
